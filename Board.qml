@@ -4,6 +4,7 @@ import QtQuick.Window 2.2
 Rectangle {
     id: board
     property alias cellSize: grid.cellHeight
+    property string movingSide: "white"
     scale:Math.min( parent.width/width, parent.height/height)
     Grid {
         id:grid

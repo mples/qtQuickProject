@@ -4,6 +4,7 @@
         <file>Figure.qml</file>
         <file>ChessGame.js</file>
         <file>Board.qml</file>
+        <file>MoveCell.qml</file>
     </qresource>
     <qresource prefix="/images">
         <file>img/bishop_black.svg</file>

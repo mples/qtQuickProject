@@ -16,12 +16,6 @@ Window {
         anchors.centerIn: parent
         height: width
         width: 800
-        /*Figure {
-            anchors.centerIn: parent
-            height: parent.cellSize
-            width: height
-        }*/
-
     }
 
     Rectangle {
@@ -38,12 +32,5 @@ Window {
             onClicked: ChessGame.startNewGame()
         }
     }
-    /*Figure {
-        x: 0
-        y: 0
-        height: 100
-        width: height
-
-    }*/
 
 }

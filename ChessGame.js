@@ -11,7 +11,7 @@ function Point(x, y) {
 }
 
 function index(column, row) {
-    return column + (row * boardSize);
+    return column + (row * boardSideSize);
 }
 
 function isValidBoardCoord(point) {
@@ -32,14 +32,53 @@ function oppositeSide(side) {
 }
 
 function changeMovingSide() {
-    if(board.movingSide == "white") {
-        board.movingSide =  "black";
-    }
-    else {
-        board.movingSide =  "white";
-    }
-    //board.movingSide = oppositeSide(board.movingSide);
+    board.movingSide = oppositeSide(board.movingSide);
 }
+
+function getFigures(side) {
+    var figures = new Array();
+    for(var i = 0 ; i < boardSize ; ++i) {
+        var figure = figureArray[i];
+        if(figure != null) {
+            if(figure.side == side) {
+                figures.push(figure);
+            }
+        }
+    }
+    return figures;
+}
+function getKing(side) {
+    for(var i = 0 ; i < boardSideSize ; ++i) {
+        for(var j = 0 ; j < boardSideSize; ++j) {
+            var figure = figureArray[index(i,j)];
+            if(figure != null) {
+                if(figure.type == "king" && figure.side == side) {
+                    return new Point(i,j);
+                }
+            }
+
+        }
+
+    }
+    return null;
+}
+function isChecked() {
+    var figures = getFigures(oppositeSide(board.movingSide));
+    var king = getKing(board.movingSide);
+
+    for(var i = 0 ; i < figures.length ; ++i) {
+        var moves = figures[i].moves(figures[i]);
+        for(var j = 0 ; j < moves.length ; ++j) {
+            if(moves[j].x == king.x && moves[j].y == king.y) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+
 
 function clearAviableMoves() {
     aviableMoves.forEach(function(item, index, array) {
@@ -50,7 +89,7 @@ function clearAviableMoves() {
 function startNewGame() {
     for(var i = 0 ; i < boardSize ; ++i) {
         if(figureArray[i] != null) {
-            figureArray[i].destroy;
+            figureArray[i].destroy();
         }
     }
     figureArray = new Array(boardSize);
@@ -93,15 +132,15 @@ function startNewGame() {
     figureArray[index(5,0)] = null;
     createFigure("bishop", "black", 5,0);
 
-    figureArray[index(3,7)] = null;
-    createFigure("king", "white", 3,7);
     figureArray[index(4,7)] = null;
-    createFigure("queen", "white", 4,7);
+    createFigure("king", "white", 4,7);
+    figureArray[index(3,7)] = null;
+    createFigure("queen", "white", 3,7);
 
-    figureArray[index(3,0)] = null;
-    createFigure("king", "black", 3,0);
     figureArray[index(4,0)] = null;
-    createFigure("queen", "black", 4,0);
+    createFigure("king", "black", 4,0);
+    figureArray[index(3,0)] = null;
+    createFigure("queen", "black", 3,0);
 
 }
 
@@ -129,13 +168,11 @@ function createFigure(type, side, column, row) {
             if(figure.side == board.movingSide) {
                 var moves = figure.moves(figure);
                 moves.forEach(function(item, index, array) {
-                  console.log(item.x, item.y);
                   createMoveCell(figure, item.x ,item.y);
                 });
 
             }
         };
-
         figureArray[index(column,row)] = figure;
     }
     else {
@@ -144,6 +181,19 @@ function createFigure(type, side, column, row) {
     }
     return true;
 
+}
+function isMovePossible(from, to) {
+    var possible = false;
+    var move_figure = figureArray[index(from.x, from.y)];
+    var attacked_figure = figureArray[index(to.x, to.y)];
+    figureArray[index(to.x, to.y)] = move_figure;
+    figureArray[index(from.x, from.y)] = null;
+
+    possible = !isChecked();
+
+    figureArray[index(to.x, to.y)] = attacked_figure;
+    figureArray[index(from.x, from.y)] = move_figure;
+    return possible;
 }
 
 function moveFigure(from, to) {
@@ -173,10 +223,13 @@ function createMoveCell(figure, column, row) {
         moveCell.figureToMove = figure;
         moveCell.clickFunc = function() {
             console.log("move cell clikced")
-            moveFigure(new Point(moveCell.figureToMove.boardColumn, moveCell.figureToMove.boardRow), new Point(moveCell.boardColumn ,moveCell.boardRow));
-            moveCell.figureToMove.boardRow = moveCell.boardRow;
-            moveCell.figureToMove.boardColumn = moveCell.boardColumn;
-            changeMovingSide();
+            if(isMovePossible(new Point(moveCell.figureToMove.boardColumn, moveCell.figureToMove.boardRow), new Point(moveCell.boardColumn ,moveCell.boardRow))) {
+                moveFigure(new Point(moveCell.figureToMove.boardColumn, moveCell.figureToMove.boardRow), new Point(moveCell.boardColumn ,moveCell.boardRow));
+                moveCell.figureToMove.boardRow = moveCell.boardRow;
+                moveCell.figureToMove.boardColumn = moveCell.boardColumn;
+                changeMovingSide();
+            }
+
             clearAviableMoves();
         };
         aviableMoves.push(moveCell);
@@ -189,38 +242,6 @@ function createMoveCell(figure, column, row) {
     return true;
 
 }
-/*
-function isChecked() {
-    var figures = getFigures(board.movingSide);
-    var king = getKing(oppositeSide(board.movingSide));
-
-
-}
-
-function getFigures(side) {
-    var figures = new Array();
-    for(var i ; i < boardSize ; ++i) {
-        var figure = figureArray[i];
-        if(figure != null) {
-            if(figure.side == side) {
-                figures.push(figure);
-            }
-        }
-    }
-    return figures;
-}
-
-function getKing(side) {
-    for(var i ; i < boardSize ; ++i) {
-        var figure = figureArray[i];
-        if(figure != null) {
-            if(figure.type == "king") {
-                return figure
-            }
-        }
-    }
-    return null;
-}*/
 
 
 function getIconImage(type, side) {

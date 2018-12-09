@@ -47,10 +47,6 @@ Item {
         ScriptAction{script: figure_component.destroy()}
     }
 
-
-
-
-
     width:height
     x: boardColumn * boardSize
     y: boardRow * boardSize

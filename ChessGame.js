@@ -94,7 +94,6 @@ function isCheckMate() {
 
 function isDraw() {
     var figures = getFigures(oppositeSide(board.movingSide) );
-    //figures = figures.concat(getFigures(oppositeSide(board.movingSide)))
     var moves = new Array();
     for(var i = 0 ; i < figures.length ; ++i) {
         moves = moves.concat(figures[i].moves(figures[i]) );
@@ -231,7 +230,6 @@ function moveFigure(from, to) {
     var attacked_figure = figureArray[index(to.x, to.y)];
     if(attacked_figure != null) {
         attacked_figure.destroyAnim.start();
-        //attacked_figure.destroy();
     }
     figureArray[index(to.x, to.y)] = move_figure;
     figureArray[index(from.x, from.y)] = null;
@@ -253,7 +251,6 @@ function createMoveCell(figure, column, row) {
         moveCell.boardSize = board.cellSize;
         moveCell.figureToMove = figure;
         moveCell.clickFunc = function() {
-            console.log("move cell clikced")
             if(isMovePossible(new Point(moveCell.figureToMove.boardColumn, moveCell.figureToMove.boardRow), new Point(moveCell.boardColumn ,moveCell.boardRow))) {
                 moveFigure(new Point(moveCell.figureToMove.boardColumn, moveCell.figureToMove.boardRow), new Point(moveCell.boardColumn ,moveCell.boardRow));
                 moveCell.figureToMove.boardRow = moveCell.boardRow;
@@ -264,7 +261,6 @@ function createMoveCell(figure, column, row) {
 
             clearAviableMoves();
             if(isCheckMate()){
-                console.log("Check mate!");
                 var won_side = oppositeSide(board.movingSide);
                 won_side = won_side.charAt(0).toUpperCase() + won_side.substr(1);
                 winDialog.winningSide = won_side;
@@ -279,7 +275,7 @@ function createMoveCell(figure, column, row) {
 
     }
     else {
-        console.log("Error: loading figure component");
+        console.log("Error: loading MoveCell component");
         return false;
     }
     return true;

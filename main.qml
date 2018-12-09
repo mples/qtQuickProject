@@ -10,18 +10,19 @@ Window {
     visible: true
     width: 1200
     height: 900
+    minimumHeight: 200
+    minimumWidth: 500
     title: qsTr("Chess Game")
     color: "gray"
-
 
     Board {
         id: board
         anchors.centerIn: parent
-        anchors.leftMargin: 100
         height: width
         width: 800
     }
     Column {
+        id: column
         anchors { left: parent.left; verticalCenter: parent.verticalCenter}
         padding: 10
         spacing: 10
@@ -38,22 +39,19 @@ Window {
             onClicked: oddColorDialog.open()
             width: 100
             height: 40
-
-
         }
         Button {
             text: "Even Color"
             onClicked: evenColorDialog.open()
             width: 100
             height: 40
-
         }
 
     }
 
     ColorDialog {
         id: evenColorDialog
-        title: "Please choose a color"
+        title: "Please choose a board color"
         onAccepted: {
             board.oddColor = evenColorDialog.color
         }
@@ -61,7 +59,7 @@ Window {
 
     ColorDialog {
         id: oddColorDialog
-        title: "Please choose a color"
+        title: "Please choose a board color"
         onAccepted: {
             board.evenColor = oddColorDialog.color
         }
@@ -86,21 +84,4 @@ Window {
             ChessGame.clearFiguresArray();
         }
     }
-
-/*
-    Rectangle {
-        height: 50
-        width: 100
-
-        Text {
-            text: "Start"
-            anchors.fill: parent
-            anchors.centerIn: parent
-        }
-        MouseArea {
-            anchors.fill: parent
-            onClicked: ChessGame.startNewGame()
-        }
-    }*/
-
 }

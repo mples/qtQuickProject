@@ -11,6 +11,7 @@ Item {
     property string side: ""
     property string type: ""
     property var moves: null
+    property bool notmoved: true
     width:height
     x: boardColumn * boardSize
     y: boardRow * boardSize

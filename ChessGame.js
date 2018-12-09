@@ -78,7 +78,29 @@ function isChecked() {
     return false;
 }
 
+function isCheckMate() {
+    var figures = getFigures(board.movingSide);
+    var moves;
+    for(var i = 0 ; i < figures.length ; ++i) {
+        moves = figures[i].moves(figures[i]);
+        for(var j = 0 ; j < moves.length ; ++j) {
+            if(isMovePossible(new Point(figures[i].boardColumn, figures[i].boardRow), moves[j])) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
+function isDraw() {
+    var figures = getFigures(oppositeSide(board.movingSide) );
+    //figures = figures.concat(getFigures(oppositeSide(board.movingSide)))
+    var moves = new Array();
+    for(var i = 0 ; i < figures.length ; ++i) {
+        moves = moves.concat(figures[i].moves(figures[i]) );
+    }
+    return moves.length == 0;
+}
 
 function clearAviableMoves() {
     aviableMoves.forEach(function(item, index, array) {
@@ -168,7 +190,9 @@ function createFigure(type, side, column, row) {
             if(figure.side == board.movingSide) {
                 var moves = figure.moves(figure);
                 moves.forEach(function(item, index, array) {
-                  createMoveCell(figure, item.x ,item.y);
+                    if(isMovePossible(new Point(figure.boardColumn, figure.boardRow) , item) ) {
+                                createMoveCell(figure, item.x ,item.y);
+                    }
                 });
 
             }
@@ -227,10 +251,23 @@ function createMoveCell(figure, column, row) {
                 moveFigure(new Point(moveCell.figureToMove.boardColumn, moveCell.figureToMove.boardRow), new Point(moveCell.boardColumn ,moveCell.boardRow));
                 moveCell.figureToMove.boardRow = moveCell.boardRow;
                 moveCell.figureToMove.boardColumn = moveCell.boardColumn;
+                figure.notmoved = false;
                 changeMovingSide();
             }
 
             clearAviableMoves();
+            if(isCheckMate()){
+                console.log("Check mate!");
+            }
+            else {
+                console.log("not chm");
+            }
+            if(isDraw()){
+                console.log("Draw!");
+            }
+            else {
+                console.log("Not Draw");
+            }
         };
         aviableMoves.push(moveCell);
 
@@ -273,7 +310,7 @@ function pawnMoves(figure) {
         if(figure.side == "white") {
             if(figure.boardRow - 1 >= 0 && figureArray[index(figure.boardColumn, figure.boardRow - 1)] == null) {
                 moves.push(new Point(figure.boardColumn , figure.boardRow - 1));
-                if(true) { //untouched TODO
+                if(figure.notmoved) {
                     if(figure.boardRow - 2 >= 0 && figureArray[index(figure.boardColumn, figure.boardRow - 2)] == null)
                         moves.push(new Point(figure.boardColumn , figure.boardRow - 2));
                 }
@@ -311,7 +348,7 @@ function pawnMoves(figure) {
         else if(figure.side == "black") {
             if(figure.boardRow + 1 >= 0 && figureArray[index(figure.boardColumn, figure.boardRow + 1)] == null) {
                 moves.push(new Point(figure.boardColumn , figure.boardRow + 1));
-                if(true) { //untouched TODO
+                if(figure.notmoved) {
                     if(figure.boardRow + 2 >= 0 && figureArray[index(figure.boardColumn, figure.boardRow + 2)] == null)
                         moves.push(new Point(figure.boardColumn , figure.boardRow + 2));
                 }

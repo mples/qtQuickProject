@@ -108,13 +108,19 @@ function clearAviableMoves() {
     });
     aviableMoves = new Array;
 }
-function startNewGame() {
+
+function clearFiguresArray() {
     for(var i = 0 ; i < boardSize ; ++i) {
         if(figureArray[i] != null) {
-            figureArray[i].destroy();
+            figureArray[i].destroyAnim.start();
         }
     }
     figureArray = new Array(boardSize);
+}
+
+function startNewGame() {
+    clearFiguresArray();
+    board.movingSide = "white";
 
     for(var i = 0 ; i < boardSideSize ; ++i){
         figureArray[index(i,6)] = null;
@@ -224,7 +230,8 @@ function moveFigure(from, to) {
     var move_figure = figureArray[index(from.x, from.y)];
     var attacked_figure = figureArray[index(to.x, to.y)];
     if(attacked_figure != null) {
-        attacked_figure.destroy();
+        attacked_figure.destroyAnim.start();
+        //attacked_figure.destroy();
     }
     figureArray[index(to.x, to.y)] = move_figure;
     figureArray[index(from.x, from.y)] = null;
@@ -258,16 +265,15 @@ function createMoveCell(figure, column, row) {
             clearAviableMoves();
             if(isCheckMate()){
                 console.log("Check mate!");
-            }
-            else {
-                console.log("not chm");
+                var won_side = oppositeSide(board.movingSide);
+                won_side = won_side.charAt(0).toUpperCase() + won_side.substr(1);
+                winDialog.winningSide = won_side;
+                winDialog.open();
             }
             if(isDraw()){
-                console.log("Draw!");
+                drawDialog.open();
             }
-            else {
-                console.log("Not Draw");
-            }
+
         };
         aviableMoves.push(moveCell);
 

@@ -2,9 +2,12 @@ import QtQuick 2.9
 import QtQuick.Window 2.2
 
 Rectangle {
-    id: board
     property alias cellSize: grid.cellHeight
     property string movingSide: "white"
+    property color oddColor: "darkblue"
+    property color evenColor: "white"
+
+    id: board
     scale:Math.min( parent.width/width, parent.height/height)
     Grid {
         id:grid
@@ -18,7 +21,7 @@ Rectangle {
             Rectangle {
                 height: grid.cellHeight
                 width: height
-                property color baseColor : (index + Math.floor(index/8))% 2 ? "darkblue" : "white"
+                property color baseColor : (index + Math.floor(index/8))% 2 ? oddColor : evenColor
                 color: baseColor
                 anchors.alignWhenCentered: parent
                 MouseArea{
